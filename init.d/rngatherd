@@ -17,12 +17,12 @@
 # Process name ( For display )
 NAME=rngatherd
 # Daemon name, where is the actual executable
-DAEMON=/usr/local/bin/rngatherd
+DAEMON=rngatherdaemon.py
 # pid file for the daemon
 PIDFILE=/var/run/rngatherd.pid
 
 # If the daemon is not there, then exit.
-test -x $DAEMON || exit 5
+command -v $DAEMON >/dev/null 2>&1 || { echo >&2 "rngatherdeamon.py is not installed.  Aborting."; exit 5; }
 
 case $1 in
     start)

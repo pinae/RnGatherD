@@ -1,20 +1,19 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
-from multiprocessing import Process, Queue
+import logging
 import os
 import sys
 import time
-import logging
-from RandPiClient import get_random
-from daemon import Daemon
-
+from multiprocessing import Process, Queue
+from rngatherd.RandPi.RandPiClient import RandPiClient
+from rngatherd.Daemon.BaseDaemon import BaseDaemon
 
 READ_HWRNG = False
 READ_RAND_PI = True
 
 
-class RnGatherD(Daemon):
+class RnGatherD(BaseDaemon):
     def __init__(self, initialized_logger):
         super().__init__(os.path.join(os.path.sep, "var", "run", "rngatherd.pid"))
         self.logger = initialized_logger
@@ -36,11 +35,12 @@ class RnGatherD(Daemon):
 
     @staticmethod
     def read_rand_pi(q):
+        client = RandPiClient()
         while True:
             if q.full():
                 time.sleep(1)
             else:
-                random_data = get_random(1024)
+                random_data = client.get_random(1024)
                 if len(random_data) == 1024:
                     for i in range((1024//8)-1):
                         q.put(random_data[i*8:(i+1)*8])
@@ -91,7 +91,7 @@ class RnGatherD(Daemon):
         super().stop(is_restart)
 
 
-if __name__ == '__main__':
+def main():
     logger = logging.getLogger("RnGatherD")
     logger.setLevel(logging.ERROR)
     formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -115,3 +115,7 @@ if __name__ == '__main__':
     else:
         print("usage: %s start|stop|restart" % sys.argv[0])
         sys.exit(2)
+
+
+if __name__ == '__main__':
+    main()

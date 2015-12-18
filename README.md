@@ -1,2 +1,2 @@
 # RnGatherD
-Random number gathering deamon
+Random number gathering daemon.

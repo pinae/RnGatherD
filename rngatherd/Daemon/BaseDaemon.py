@@ -5,10 +5,10 @@ import sys
 import os
 import time
 import atexit
-from signal import SIGTERM, SIGKILL
+from signal import SIGTERM
 
 
-class Daemon:
+class BaseDaemon:
     """
     A generic daemon class.
 
