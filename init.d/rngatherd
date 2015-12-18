@@ -1,0 +1,67 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          rngatherd
+# Required-Start:    networking
+# Required-Stop:     networking
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Daemon providing /dev/hwrandom
+# Description:       This daemon constructs a pseudo device
+#                    in /dev/hwrandom which can be used by
+#                    rngd to feed entropy to the kernel.
+### END INIT INFO
+
+# Using the lsb functions to perform the operations.
+. /lib/lsb/init-functions
+# Process name ( For display )
+NAME=rngatherd
+# Daemon name, where is the actual executable
+DAEMON=/usr/local/bin/rngatherd
+# pid file for the daemon
+PIDFILE=/var/run/rngatherd.pid
+
+# If the daemon is not there, then exit.
+test -x $DAEMON || exit 5
+
+case $1 in
+    start)
+        # Start the daemon.
+        log_daemon_msg "Starting" "$NAME"
+        # Start the daemon
+        if $DAEMON start; then
+            log_end_msg 0
+        else
+            log_end_msg 1
+        fi
+        ;;
+    stop)
+        # Stop the daemon.
+        log_daemon_msg "Stoppping" "$NAME"
+        if $DAEMON stop; then
+            log_end_msg 0
+        else
+            log_end_msg 1
+        fi
+        ;;
+    restart)
+        # Restart the daemon.
+        log_daemon_msg "Restarting" "$NAME"
+        $DAEMON restart
+        ;;
+    status)
+        # Check the status of the process.
+        if [ -e $PIDFILE ]; then
+            status_of_proc -p $PIDFILE $DAEMON "$NAME process" && exit 0 || exit $?
+            log_end_msg 0
+        else
+            log_daemon_msg "$NAME Process is not running"
+            log_end_msg 0
+        fi
+        ;;
+    *)
+        # For invalid arguments, print the usage message.
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 2
+        ;;
+esac

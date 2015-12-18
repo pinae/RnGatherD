@@ -26,7 +26,7 @@ def remove_pkcs7_padding(data):
 
 
 def get_random(length=64):
-    request = requests.get('http://127.0.0.1:8000/entropy/random?length=' + str(length))
+    request = requests.get('http://10.22.253.134/entropy/random?length=' + str(length))
     data = request.json()
     if hmac.new(ENCRYPTION_KEY,
                 b64decode(data['encrypted_data']),
