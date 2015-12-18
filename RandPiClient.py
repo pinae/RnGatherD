@@ -26,15 +26,18 @@ def remove_pkcs7_padding(data):
 
 
 def get_random(length=64):
-    request = requests.get('http://10.22.253.134/entropy/random?length=' + str(length))
-    data = request.json()
+    try:
+        response = requests.get('http://10.22.253.135/entropy/random?length=' + str(length))
+        response_data = response.json()
+    except OSError:
+        return b''
     if hmac.new(ENCRYPTION_KEY,
-                b64decode(data['encrypted_data']),
-                SHA256).digest() != b64decode(data['hmac']):
+                b64decode(response_data['encrypted_data']),
+                SHA256).digest() != b64decode(response_data['hmac']):
         print("Wrong signature!")
-        exit(1)
+        return b''
     cipher = AES.new(ENCRYPTION_KEY, AES.MODE_CBC, ENCRYPTION_IV)
-    data = remove_pkcs7_padding(cipher.decrypt(b64decode(data['encrypted_data'])))
+    data = remove_pkcs7_padding(cipher.decrypt(b64decode(response_data['encrypted_data'])))
     return data
 
 if __name__ == "__main__":

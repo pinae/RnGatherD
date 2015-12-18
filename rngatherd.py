@@ -41,8 +41,11 @@ class RnGatherD(Daemon):
                 time.sleep(1)
             else:
                 random_data = get_random(1024)
-                for i in range((1024//8)-1):
-                    q.put(random_data[i*8:(i+1)*8])
+                if len(random_data) == 1024:
+                    for i in range((1024//8)-1):
+                        q.put(random_data[i*8:(i+1)*8])
+                else:
+                    time.sleep(1)
 
     def run(self):
         if not os.path.exists(self.device):
