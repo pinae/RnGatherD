@@ -13,12 +13,10 @@ from rngatherd.RandPi.pbkdf2 import PBKDF2
 
 
 class RandPiClient(object):
-    def __init__(self):
-        self.SHARED_SECRET = ("Mein tolles langes Passwort, das total sicher ist. " +
-                         "Das sieht man an den Sonderzeichen wie / (Slash) oder $ (Dollar). " +
-                         "Außerdem enthält diese Passphrase einfach eine Menge Zeichen, " +
-                         "die ein Angreifer erst mal erraten muss.")
-        self.SHARED_SALT = "pepper"
+    def __init__(self, url, secret, salt="pepper"):
+        self.url = url
+        self.SHARED_SECRET = secret
+        self.SHARED_SALT = salt
         base_key = PBKDF2(self.SHARED_SECRET.encode('utf-8'), self.SHARED_SALT.encode('utf-8'),
                           iterations=32000, digestmodule=SHA384, macmodule=HMAC).read(48)
         self.ENCRYPTION_KEY = base_key[:32]
@@ -30,7 +28,7 @@ class RandPiClient(object):
 
     def get_random(self, length=64):
         try:
-            response = requests.get('http://10.22.253.134/entropy/random?length=' + str(length))
+            response = requests.get(self.url + '?length=' + str(length))
             response_data = response.json()
         except OSError:
             return b''
@@ -44,5 +42,5 @@ class RandPiClient(object):
         return data
 
 if __name__ == "__main__":
-    client = RandPiClient()
+    client = RandPiClient("http://127.0.0.1/entropy/random")
     sys.stdout.buffer.write(client.get_random())
