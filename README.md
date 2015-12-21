@@ -26,7 +26,7 @@ to change the `secret` and `salt` in the **[RandPi]** section to match the serve
 these so the settings on server and all clients have to match.
 
 If settings are missing default values are used. There has to be a **[Hwrng]** or a **[RandPi]** section to activate
-aft least one random source.
+at least one random source.
 
 The daemon logs to `/var/vog/rngatherd.log`. The log level can be specified in the settings by choosing one of `ERROR`,
 `WARN` or `INFO`.
