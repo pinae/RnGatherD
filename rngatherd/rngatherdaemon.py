@@ -24,6 +24,13 @@ class RnGatherD(BaseDaemon):
         if "Settings" in self.config.sections():
             self.device = self.config['Settings'].get('Device', os.path.join(os.path.sep, "dev", "hwrandom"))
             queue_size = int(self.config['Settings'].get('QueueSize', '1024'))
+            log_level_setting = self.config['Settings'].get('LogLevel', "ERROR")
+            if log_level_setting == "INFO":
+                self.logger.setLevel(logging.INFO)
+            elif log_level_setting == "WARN":
+                self.logger.setLevel(logging.WARN)
+            else:
+                self.logger.setLevel(logging.ERROR)
         else:
             self.device = os.path.join(os.path.sep, "dev", "hwrandom")
             queue_size = 1024
@@ -144,7 +151,8 @@ def make_config():
     if "Settings" not in config.sections():
         config['Settings'] = {
             "Device": os.path.join(os.path.sep, "dev", "hwrandom"),
-            "QueueSize": str(1024)
+            "QueueSize": str(1024),
+            "LogLevel": "ERROR"
         }
     if "Hwrng" not in config.sections() and os.path.exists(os.path.join(os.path.sep, "dev", "hwrng")):
         config['Hwrng'] = {
