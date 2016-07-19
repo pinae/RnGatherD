@@ -42,5 +42,5 @@ class RandPiClient(object):
         return data
 
 if __name__ == "__main__":
-    client = RandPiClient("http://127.0.0.1/entropy/random")
+    client = RandPiClient("http://127.0.0.1/entropy/random", "123456")
     sys.stdout.buffer.write(client.get_random())
